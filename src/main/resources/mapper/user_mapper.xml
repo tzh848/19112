@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.st.dao.IUserDao">
+
+<select id="checkuser" parameterType="java.util.Map" resultType="map">
+select * ,date_format(regDate,'%Y年-%m月-%d日 %H时：%i分：%s秒') as regDate_text,
+date_format(lastLoginDate,'%Y年-%m月-%d日 %H时：%i分：%s秒') as lastLoginDate_text 
+from user where state=1 limit ${start},${limit}
+</select>
+
+<select id="checkusername" resultType="map">
+select username from user where state=1
+</select>
+
+<select id="checkusers" parameterType="string" resultType="map">
+select *,date_format(regDate,'%Y年-%m月-%d日 %H时：%i分：%s秒') as regDate_text,
+date_format(lastLoginDate,'%Y年-%m月-%d日 %H时：%i分：%s秒') as lastLoginDate_text 
+ from user where state=1 and username like '%${username}%'
+</select>
+
+<insert id="adduser" parameterType="map">
+insert into user (userid,city,username,state,password,regDate,tel,sex)
+ values (#{userid},#{city},#{username},1,#{password},now(),#{tel},#{sex})
+</insert>
+
+<update id="deleteuser" parameterType="map">
+update user set state=0 where userid in (
+<foreach collection="userid" item="item" index="index" separator=",">
+ #{item}
+</foreach>
+)
+</update>
+
+<update id="updateUserP" parameterType="java.util.Map">
+update user set username=#{username},sex=#{sex},city=#{city},tel=#{tel},password=#{password}
+ where userid=#{userid}
+</update>
+
+<update id="updatalastLoginDate" parameterType="string">
+update user set lastLoginDate=now() 
+ where username=#{username}
+</update>
+
+<!-- 查询业务员的总人数 -->
+<select id="getCount" parameterType="java.util.Map" resultType="int">
+select count(*) from user where state=1
+</select>
+<!-- 按照业务员姓名查询业务员的总人数 -->
+<select id="getCount2" parameterType="string" resultType="int">
+select count(*) from user where username =#{username} and state=1
+</select>
+</mapper>

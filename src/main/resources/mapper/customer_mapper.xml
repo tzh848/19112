@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.st.dao.ICustomerDao">
+
+<select id="checkcustomer2" parameterType="map" resultType="map">
+select *,date_format(create_time,'%Y年-%m月-%d日 %H时：%i分：%s秒') as create_time_text
+ from customer where state=1 and customer_name like '%${customer_name}%' 
+</select>
+
+<select id="getCount" resultType="int">
+select count(*) from customer where state=1
+</select>
+
+<select id="getPublicCount" resultType="int">
+select count(*) from customer where state=1 and customer_public=1
+</select>
+
+<select id="getPrivateCount" parameterType="map" resultType="int">
+select count(*) from customer where state=1 and customer_public=0 and customer_user='${username}'
+</select>
+
+<select id="checkprivatecus" parameterType="map" resultType="map">
+select *,date_format(create_time,'%Y年-%m月-%d日 %H时：%i分：%s秒') as create_time_text
+ from customer where state=1 and customer_public=0 and customer_user='${username}' limit ${start},${limit}
+</select>
+
+<select id="checkprivatecus_email" parameterType="map" resultType="map">
+select *,date_format(create_time,'%Y年-%m月-%d日 %H时：%i分：%s秒') as create_time_text
+ from customer where state=1 and customer_public=0 and customer_user='${username}'
+</select>
+
+<select id="checkpubliccus2" parameterType="map" resultType="map">
+select *,date_format(create_time,'%Y年-%m月-%d日 %H时：%i分：%s秒') as create_time_text
+ from customer where state=1 and customer_name like '%${customer_name}%' and customer_public=1
+</select>
+
+<select id="checkprivatecus2" parameterType="map" resultType="map">
+select *,date_format(create_time,'%Y年-%m月-%d日 %H时：%i分：%s秒') as create_time_text
+ from customer where state=1 and customer_name like '%${customer_name}%' and customer_public=0 and customer_user=#{customer_user}
+</select>
+
+<select id="checkcustomer" resultType="map">
+select *,date_format(create_time,'%Y年-%m月-%d日 %H时：%i分：%s秒') as create_time_text
+ from customer where state=1 limit ${start},${limit}
+</select>
+
+<select id="checkpubliccus" resultType="map">
+select *,date_format(create_time,'%Y年-%m月-%d日 %H时：%i分：%s秒') as create_time_text
+ from customer where state=1 and customer_public=1 limit ${start},${limit}
+</select>
+
+<update id="delcustomer" parameterType="map">
+update customer set state=0 where customer_id in (
+<foreach collection="customer_id" item="item" index="index" separator=",">
+ #{item}
+</foreach>
+)
+</update>
+
+<insert id="addcustomer" parameterType="map">
+insert into customer (customer_id,customer_name,customer_man,customer_tel,customer_email,customer_addr,state,customer_public,customer_grade,create_time,customer_user) values 
+(#{customer_id},#{customer_name},#{customer_man},#{customer_tel},#{customer_email},#{customer_addr},1,1,#{customer_grade},now(),#{customer_user})
+</insert>
+
+<update id="updatecus" parameterType="map">
+update customer set customer_name=#{customer_name},customer_man=#{customer_man},customer_tel=#{customer_tel},customer_email=#{customer_email},customer_addr=#{customer_addr},
+customer_grade=#{customer_grade},customer_user=#{customer_user} where customer_id=#{customer_id}
+</update>
+
+<update id="gendan" parameterType="map">
+update customer set customer_user=#{customer_user},customer_public=0 where customer_id in (
+<foreach collection="customer_id" index="index" separator="," item="item">
+#{item}
+</foreach>
+)
+</update>
+
+<update id="giveup" parameterType="map">
+update customer set customer_user='',customer_public=1 where customer_id in (
+<foreach collection="customer_id" index="index" separator="," item="item">
+#{item}
+</foreach>
+)
+</update>
+
+<!--  -->
+<select id="no_visit_list" resultType="map" parameterType="map">
+select * from customer as a left join visit as b on a.customer_name=b.visit_customer_name 
+ where curdate()>=date_add(b.visit_time,interval 2 day)
+</select>
+
+<insert id="init_tip" parameterType="map">
+insert into tip (tip_id,tip_time,tip_info,tip_user_id,tip_state)
+ values
+<foreach collection="tip_infos" item="tip_info" separator=",">
+(#{tip_info.uuid},now(),#{tip_info.tip_info},#{tip_info.customer_user},0)
+</foreach>
+</insert>
+
+</mapper>

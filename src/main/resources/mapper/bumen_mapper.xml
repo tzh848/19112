@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.st.dao.IBumenDao">
+
+<select id="checkbumen" resultType="map">
+select * from bumen where state=1
+</select>
+
+<select id="checkbumen2" parameterType="map" resultType="map">
+select * from bumen where state=1 and bmname like '%${bmname}%'
+</select>
+
+<delete id="delbumen" parameterType="map">
+delete from bumen where bmid in (
+<foreach collection="bmid" index="index" separator="," item="item">
+#{item}
+</foreach>
+)
+</delete>
+
+<insert id="addbumen" parameterType="map">
+insert into bumen (bmid,bmname,state,manager) values (#{bmid},#{bmname},1,#{manager})
+</insert>
+
+
+
+<update id="updatebumen" parameterType="map">
+update bumen set bmname=#{bmname},manager=#{manager}
+ where bmid=#{bmid}
+</update>
+
+</mapper>

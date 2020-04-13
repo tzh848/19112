@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.st.dao.IPositionDao">
+
+<insert id="addrole" parameterType="map">
+insert into role (role_id,role_name) values (#{role_id},#{role_name})
+</insert>
+
+<update id="updaterole" parameterType="map">
+update role set role_name=#{role_name} where role_id=#{role_id}
+</update>
+
+<select id="checkrolename" parameterType="map" resultType="map">
+select role_id,role_name from role limit ${start},${limit}
+</select>
+
+<select id="checkroles" parameterType="map" resultType="com.st.bean.Role">
+select * from role where role_name like '%${role_name}%'
+</select>
+
+<select id="checkrolename2" parameterType="string" resultType="string">
+select a.role_id from role as a left join user_role as b on a.role_id=b.role_id where userid=#{userid}
+</select>
+
+<select id="checkrolename3" resultType="map">
+select role_id,role_name from role
+</select>
+<delete id="del_user_role" parameterType="map">
+delete from user_role where userid=#{userid}
+</delete>
+
+<delete id="delrole" parameterType="map">
+delete from role where role_id in (
+<foreach collection="role_id" index="index" separator="," item="item">
+#{item}
+</foreach>
+)
+</delete>
+
+<delete id="deluserrole" parameterType="map">
+delete from user_role where role_id in (
+<foreach collection="role_id" index="index" separator="," item="item">
+#{item}
+</foreach>
+)
+</delete>
+
+
+<insert id="add_user_role" parameterType="map">
+insert into user_role (userid,role_id) values 
+<foreach collection="role_id" index="index" separator="," item="item">
+(#{userid},#{item})
+</foreach>
+</insert>
+
+<!-- 查询角色的总个数 -->
+<select id="getCount" parameterType="java.util.Map" resultType="int">
+select count(*) from role
+</select>
+<!-- 按照角色名查询角色的总个数 -->
+<select id="getCount2" parameterType="string" resultType="int">
+select count(*) from role where role_name =#{role_name}
+</select>
+
+
+</mapper>

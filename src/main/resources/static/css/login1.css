@@ -1,0 +1,34 @@
+body{
+	width: 100%;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+/* 垂直居中 */
+.bg{
+	position: absolute;
+	top: 50%;
+	left: 80%;
+	transform: translate(-50%,-50%);
+	width: 380px;
+}
+.login_title{
+	font-weight: bold;
+}
+.login_button{
+	width: 100%;
+}
+.login_box a{
+	text-decoration: none;
+	color: #1870A9;
+}
+.login_box{
+	display: flex;
+	justify-content: space-between;
+	margin-top: 15px;
+	margin-bottom: 5px;
+}
+.error-tip{
+	display: none;
+	padding-left: 3px;
+	color: red;
+}

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.st.dao.IVisitDao">
+
+<insert id="huifang" parameterType="map">
+insert into visit 
+(visit_id,visit_customer_name,visit_user_name,visit_time,visit_info,visit_pattern,visit_pay,visit_money) 
+values 
+(#{visit_id},#{visit_customer_name},#{visit_user_name},now(),#{visit_info},#{visit_pattern},#{visit_pay},#{visit_money})
+</insert>
+
+<select id="checkvisit" resultType="map">
+select *,date_format(visit_time,'%Y年-%m月-%d日 %H时：%i分：%s秒') as visit_time_text
+ from visit
+</select>
+
+<select id="checkvisit2" parameterType="map" resultType="map">
+select **,date_format(visit_time,'%Y年-%m月-%d日 %H时：%i分：%s秒') as visit_time_text
+ from visit where visit_customer_name like '%${name}%' or visit_user_name like '%${name}%'
+</select>
+
+<delete id="delvisit" parameterType="map">
+delete from visit where visit_id in (
+<foreach collection="visit_id" item="item" index="index" separator=",">
+#{item}
+</foreach>
+)
+</delete>
+
+
+</mapper>
